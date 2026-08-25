@@ -171,6 +171,20 @@ The rejection never reaches `tool` — the destructive action is not executed.
 
 ---
 
+## Timeline deliverables
+
+| Slot | Deliverable | Where |
+|---|---|---|
+| 0-30' | tests baseline log | gate block above; `pytest -q` → 25 passed |
+| 30-75' | core tests pass | 19 offline tests + 6 live-LLM smoke tests |
+| 75-120' | 6 scenarios run | `outputs/metrics.json` — 7 scenarios, 100% |
+| 120-180' | trace JSON / history | `outputs/trace_history.json` (HITL), `outputs/trace_retry.json` (retry loop) |
+| 180-225' | metrics.json + report.md | `outputs/metrics.json`, `reports/lab_report.md` |
+| 225-240' | demo + self-assessment | `reports/self_assessment.md` (95/100, with the deductions argued) |
+
+Traces are produced by `cli.py export-trace --thread-id <id> --output <path>`, reading the
+SQLite checkpointer — no LLM calls, so a grader can regenerate them offline from the DB.
+
 ## Not done / deliberate limits
 
 - `configs/grading.yaml` **not run** — hidden scenarios are not in the repo, as instructed.

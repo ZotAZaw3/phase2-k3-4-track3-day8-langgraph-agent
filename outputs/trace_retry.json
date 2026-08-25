@@ -1,0 +1,255 @@
+{
+  "thread_id": "thread-retry_demo",
+  "checkpoint_count": 12,
+  "steps": [
+    {
+      "step": 0,
+      "checkpoint_id": "1f1a065e-9252-6114-bfff-410d4c4f7a74",
+      "next_nodes": [
+        "__start__"
+      ],
+      "nodes_so_far": [],
+      "route": null,
+      "attempt": null,
+      "evaluation_result": null,
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 1,
+      "checkpoint_id": "1f1a065e-9256-6f47-8000-7414c779b8a2",
+      "next_nodes": [
+        "intake"
+      ],
+      "nodes_so_far": [],
+      "route": "",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 2,
+      "checkpoint_id": "1f1a065e-925b-6d55-8001-8812d978f63c",
+      "next_nodes": [
+        "classify"
+      ],
+      "nodes_so_far": [
+        "intake"
+      ],
+      "route": "",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 3,
+      "checkpoint_id": "1f1a065e-be47-696d-8002-04372401a0e2",
+      "next_nodes": [
+        "retry"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify"
+      ],
+      "route": "error",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 4,
+      "checkpoint_id": "1f1a065e-be47-696e-8003-75a9e4d6dd8e",
+      "next_nodes": [
+        "tool"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry"
+      ],
+      "route": "error",
+      "attempt": 1,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 5,
+      "checkpoint_id": "1f1a065e-be47-696f-8004-0df119ad516f",
+      "next_nodes": [
+        "evaluate"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool"
+      ],
+      "route": "error",
+      "attempt": 1,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 6,
+      "checkpoint_id": "1f1a065e-be47-6970-8005-e8436de2c691",
+      "next_nodes": [
+        "retry"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool",
+        "evaluate"
+      ],
+      "route": "error",
+      "attempt": 1,
+      "evaluation_result": "needs_retry",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 7,
+      "checkpoint_id": "1f1a065e-be47-6971-8006-bcb7bea7712b",
+      "next_nodes": [
+        "tool"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool",
+        "evaluate",
+        "retry"
+      ],
+      "route": "error",
+      "attempt": 2,
+      "evaluation_result": "needs_retry",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 8,
+      "checkpoint_id": "1f1a065e-be6d-66b4-8007-78f8db8b5af8",
+      "next_nodes": [
+        "evaluate"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool",
+        "evaluate",
+        "retry",
+        "tool"
+      ],
+      "route": "error",
+      "attempt": 2,
+      "evaluation_result": "needs_retry",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)",
+        "lookup ok: record found for 'Timeout failure while processing request' (attempt 2)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 9,
+      "checkpoint_id": "1f1a065e-cdf6-6c09-8008-0d6433a367c4",
+      "next_nodes": [
+        "answer"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool",
+        "evaluate",
+        "retry",
+        "tool",
+        "evaluate"
+      ],
+      "route": "error",
+      "attempt": 2,
+      "evaluation_result": "success",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)",
+        "lookup ok: record found for 'Timeout failure while processing request' (attempt 2)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 10,
+      "checkpoint_id": "1f1a065e-d63b-6a7a-8009-9c026e570ae7",
+      "next_nodes": [
+        "finalize"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool",
+        "evaluate",
+        "retry",
+        "tool",
+        "evaluate",
+        "answer"
+      ],
+      "route": "error",
+      "attempt": 2,
+      "evaluation_result": "success",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)",
+        "lookup ok: record found for 'Timeout failure while processing request' (attempt 2)"
+      ],
+      "final_answer": "The timeout failure you experienced was due to an upstream service being unavailable. We have confirmed that the record for this issue was found, and no further"
+    },
+    {
+      "step": 11,
+      "checkpoint_id": "1f1a065e-d63b-6a7b-800a-a88e9ea7eb26",
+      "next_nodes": [],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "retry",
+        "tool",
+        "evaluate",
+        "retry",
+        "tool",
+        "evaluate",
+        "answer",
+        "finalize"
+      ],
+      "route": "error",
+      "attempt": 2,
+      "evaluation_result": "success",
+      "approval": null,
+      "tool_results": [
+        "ERROR: upstream service unavailable (attempt 1)",
+        "lookup ok: record found for 'Timeout failure while processing request' (attempt 2)"
+      ],
+      "final_answer": "The timeout failure you experienced was due to an upstream service being unavailable. We have confirmed that the record for this issue was found, and no further"
+    }
+  ]
+}

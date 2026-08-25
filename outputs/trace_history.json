@@ -1,0 +1,216 @@
+{
+  "thread_id": "thread-resume_demo",
+  "checkpoint_count": 10,
+  "steps": [
+    {
+      "step": 0,
+      "checkpoint_id": "1f1a0611-739a-6e16-bfff-162498695125",
+      "next_nodes": [
+        "__start__"
+      ],
+      "nodes_so_far": [],
+      "route": null,
+      "attempt": null,
+      "evaluation_result": null,
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 1,
+      "checkpoint_id": "1f1a0611-739a-6e17-8000-96df7f8e9e49",
+      "next_nodes": [
+        "intake"
+      ],
+      "nodes_so_far": [],
+      "route": "",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 2,
+      "checkpoint_id": "1f1a0611-739a-6e18-8001-eca61a059292",
+      "next_nodes": [
+        "classify"
+      ],
+      "nodes_so_far": [
+        "intake"
+      ],
+      "route": "",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 3,
+      "checkpoint_id": "1f1a0611-a0df-61d4-8002-b12f9ee0b1b5",
+      "next_nodes": [
+        "risky_action"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 4,
+      "checkpoint_id": "1f1a0611-a881-6673-8003-0d237071ff9d",
+      "next_nodes": [
+        "approval"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "risky_action"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": null,
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 5,
+      "checkpoint_id": "1f1a0611-a881-6674-8004-3a764b498001",
+      "next_nodes": [
+        "tool"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "risky_action",
+        "approval"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": {
+        "approved": true,
+        "reviewer": "mock-reviewer",
+        "comment": "auto-approved (mock HITL)"
+      },
+      "tool_results": [],
+      "final_answer": null
+    },
+    {
+      "step": 6,
+      "checkpoint_id": "1f1a0611-a886-614a-8005-fe1dd28e9a4a",
+      "next_nodes": [
+        "evaluate"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "risky_action",
+        "approval",
+        "tool"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "",
+      "approval": {
+        "approved": true,
+        "reviewer": "mock-reviewer",
+        "comment": "auto-approved (mock HITL)"
+      },
+      "tool_results": [
+        "action executed: Process a refund for the customer and send a confirmation email. (ref ACT-0001)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 7,
+      "checkpoint_id": "1f1a0611-afc0-6aec-8006-16df2e6b9822",
+      "next_nodes": [
+        "answer"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "risky_action",
+        "approval",
+        "tool",
+        "evaluate"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "success",
+      "approval": {
+        "approved": true,
+        "reviewer": "mock-reviewer",
+        "comment": "auto-approved (mock HITL)"
+      },
+      "tool_results": [
+        "action executed: Process a refund for the customer and send a confirmation email. (ref ACT-0001)"
+      ],
+      "final_answer": null
+    },
+    {
+      "step": 8,
+      "checkpoint_id": "1f1a0611-b843-6180-8007-ac94264b0214",
+      "next_nodes": [
+        "finalize"
+      ],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "risky_action",
+        "approval",
+        "tool",
+        "evaluate",
+        "answer"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "success",
+      "approval": {
+        "approved": true,
+        "reviewer": "mock-reviewer",
+        "comment": "auto-approved (mock HITL)"
+      },
+      "tool_results": [
+        "action executed: Process a refund for the customer and send a confirmation email. (ref ACT-0001)"
+      ],
+      "final_answer": "The refund has been processed for your account, and a confirmation email has been sent. If you have any further questions, feel free to reach out."
+    },
+    {
+      "step": 9,
+      "checkpoint_id": "1f1a0611-b845-6e88-8008-eea4af592ac4",
+      "next_nodes": [],
+      "nodes_so_far": [
+        "intake",
+        "classify",
+        "risky_action",
+        "approval",
+        "tool",
+        "evaluate",
+        "answer",
+        "finalize"
+      ],
+      "route": "risky",
+      "attempt": 0,
+      "evaluation_result": "success",
+      "approval": {
+        "approved": true,
+        "reviewer": "mock-reviewer",
+        "comment": "auto-approved (mock HITL)"
+      },
+      "tool_results": [
+        "action executed: Process a refund for the customer and send a confirmation email. (ref ACT-0001)"
+      ],
+      "final_answer": "The refund has been processed for your account, and a confirmation email has been sent. If you have any further questions, feel free to reach out."
+    }
+  ]
+}

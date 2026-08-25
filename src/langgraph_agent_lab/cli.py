@@ -84,5 +84,44 @@ def validate_metrics(metrics: Annotated[Path, typer.Option("--metrics")]) -> Non
     typer.echo(f"Metrics valid. success_rate={report.success_rate:.2%}")
 
 
+@app.command("export-trace")
+def export_trace(
+    thread_id: Annotated[str, typer.Option("--thread-id")],
+    output: Annotated[Path, typer.Option("--output")],
+    checkpointer: Annotated[str, typer.Option("--checkpointer")] = "sqlite",
+    database_url: Annotated[str | None, typer.Option("--database-url")] = None,
+) -> None:
+    """Export the checkpointed state history of one thread as a readable trace."""
+    graph = build_graph(checkpointer=build_checkpointer(checkpointer, database_url))
+    run_config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
+    snapshots = list(graph.get_state_history(run_config))
+    if not snapshots:
+        raise typer.BadParameter(f"No checkpoints found for thread {thread_id}")
+
+    steps = []
+    for index, snapshot in enumerate(reversed(snapshots)):  # oldest checkpoint first
+        values = snapshot.values
+        answer = values.get("final_answer")
+        steps.append(
+            {
+                "step": index,
+                "checkpoint_id": snapshot.config["configurable"].get("checkpoint_id"),
+                "next_nodes": list(snapshot.next),
+                "nodes_so_far": [event.get("node") for event in values.get("events", [])],
+                "route": values.get("route"),
+                "attempt": values.get("attempt"),
+                "evaluation_result": values.get("evaluation_result"),
+                "approval": values.get("approval"),
+                "tool_results": values.get("tool_results", []),
+                "final_answer": (answer[:160] if answer else None),
+            }
+        )
+
+    trace = {"thread_id": thread_id, "checkpoint_count": len(snapshots), "steps": steps}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(trace, indent=2, ensure_ascii=False), encoding="utf-8")
+    typer.echo(f"Wrote {len(snapshots)} checkpoints for {thread_id} to {output}")
+
+
 if __name__ == "__main__":
     app()

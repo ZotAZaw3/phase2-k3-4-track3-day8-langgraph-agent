@@ -3,7 +3,7 @@
 ## 1. Team / student
 
 - Name: Bùi Minh Long (MSSV 2A202601462)
-- Repo/commit: https://github.com/ZotAZaw3/phase2-k3-4-track3-day8-langgraph-agent @ `21c2fc7`
+- Repo/commit: https://github.com/ZotAZaw3/phase2-k3-4-track3-day8-langgraph-agent @ `e761788`
 - Date: 2026-08-25
 
 ## 2. Architecture
@@ -29,6 +29,52 @@ START → intake → classify → [route_after_classify]
 `classify_node` and `answer_node` call a real LLM (structured output for classification,
 grounded generation for the answer). `evaluate_node` uses a deterministic hard-failure check
 plus an LLM-as-judge for soft quality. Nothing branches on scenario ids or exact query text.
+
+Rendered from the compiled graph itself via `build_graph().get_graph().draw_mermaid()`:
+
+```mermaid
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	intake(intake)
+	classify(classify)
+	tool(tool)
+	evaluate(evaluate)
+	answer(answer)
+	clarify(clarify)
+	risky_action(risky_action)
+	approval(approval)
+	retry(retry)
+	dead_letter(dead_letter)
+	finalize(finalize)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> intake;
+	answer --> finalize;
+	approval -.-> clarify;
+	approval -.-> tool;
+	clarify --> finalize;
+	classify -.-> answer;
+	classify -.-> clarify;
+	classify -.-> retry;
+	classify -.-> risky_action;
+	classify -.-> tool;
+	dead_letter --> finalize;
+	evaluate -.-> answer;
+	evaluate -.-> retry;
+	intake --> classify;
+	retry -.-> dead_letter;
+	retry -.-> tool;
+	risky_action --> approval;
+	tool --> evaluate;
+	finalize --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+```
 
 ## 3. State schema
 
@@ -98,6 +144,21 @@ with `graph.get_state()` and counts `graph.get_state_history()`; `resume_success
 readback, not a hardcoded flag. Switching `checkpointer: sqlite` in the config persists
 checkpoints to `outputs/checkpoints.sqlite` (WAL mode), which survives process restart.
 
+Crash-resume was verified across two separate interpreters. Process A ran the risky scenario
+with the SQLite checkpointer and exited; process B started fresh, opened only the database file,
+and recovered the thread without re-running a single node:
+
+```text
+# process A
+PROCESS A nodes: ['intake', 'classify', 'risky_action', 'approval', 'tool', 'evaluate',
+                  'answer', 'finalize']
+
+# process B — new interpreter, reads outputs/checkpoints.sqlite only
+checkpoints recovered: 10
+recovered route: risky | approval: {'approved': True, 'reviewer': 'mock-reviewer', ...}
+recovered answer: The refund has been processed for your account, and a confirmation email …
+```
+
 ## 7. Extension work
 
 - LLM-as-judge in `evaluate_node` (with deterministic fallback when the judge is unavailable).
@@ -105,6 +166,20 @@ checkpoints to `outputs/checkpoints.sqlite` (WAL mode), which survives process r
 - Real HITL: `LANGGRAPH_INTERRUPT=true` makes `approval_node` call `interrupt()` and wait for a
   human decision instead of mock-approving.
 - State-history readback as machine-checked persistence evidence.
+- Mermaid diagram in section 2, rendered from the compiled graph.
+
+Evidence for the HITL extension — run with `LANGGRAPH_INTERRUPT=true`, the graph pauses at the
+approval node, and is resumed with `Command(resume={"approved": False, ...})`. The rejected
+deletion never reaches `tool`:
+
+```text
+PAUSED at interrupt: True
+proposed_action: Delete the customer account following support verification.
+nodes: ['intake', 'classify', 'risky_action', 'approval', 'clarify', 'finalize']
+approval: {'approved': False, 'reviewer': 'human', 'comment': 'not verified by a human yet'}
+tool called? False
+pending_question: What specific action would you like us to take regarding the customer account?
+```
 
 ## 8. Improvement plan
 

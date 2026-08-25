@@ -13,6 +13,16 @@ STUDENT_ID = "2A202601462"
 REPO_URL = "https://github.com/ZotAZaw3/phase2-k3-4-track3-day8-langgraph-agent"
 
 
+def _graph_diagram() -> str:
+    """Render the compiled graph as Mermaid so the diagram cannot drift from the wiring."""
+    try:
+        from .graph import build_graph
+
+        return build_graph().get_graph().draw_mermaid().strip()
+    except Exception as exc:  # diagram is illustrative, never worth failing a report over
+        return f"(diagram unavailable: {type(exc).__name__}: {exc})"
+
+
 def _current_commit() -> str:
     """Resolve the commit this report describes; blank outside a git checkout."""
     try:
@@ -98,6 +108,12 @@ route; every branch converges on `finalize → END`, so no path can hang.
 grounded generation for the answer). `evaluate_node` uses a deterministic hard-failure check
 plus an LLM-as-judge for soft quality. Nothing branches on scenario ids or exact query text.
 
+Rendered from the compiled graph itself via `build_graph().get_graph().draw_mermaid()`:
+
+```mermaid
+{_graph_diagram()}
+```
+
 ## 3. State schema
 
 | Field | Reducer | Why |
@@ -149,6 +165,21 @@ with `graph.get_state()` and counts `graph.get_state_history()`; `resume_success
 readback, not a hardcoded flag. Switching `checkpointer: sqlite` in the config persists
 checkpoints to `outputs/checkpoints.sqlite` (WAL mode), which survives process restart.
 
+Crash-resume was verified across two separate interpreters. Process A ran the risky scenario
+with the SQLite checkpointer and exited; process B started fresh, opened only the database file,
+and recovered the thread without re-running a single node:
+
+```text
+# process A
+PROCESS A nodes: ['intake', 'classify', 'risky_action', 'approval', 'tool', 'evaluate',
+                  'answer', 'finalize']
+
+# process B — new interpreter, reads outputs/checkpoints.sqlite only
+checkpoints recovered: 10
+recovered route: risky | approval: {{'approved': True, 'reviewer': 'mock-reviewer', ...}}
+recovered answer: The refund has been processed for your account, and a confirmation email …
+```
+
 ## 7. Extension work
 
 - LLM-as-judge in `evaluate_node` (with deterministic fallback when the judge is unavailable).
@@ -156,6 +187,20 @@ checkpoints to `outputs/checkpoints.sqlite` (WAL mode), which survives process r
 - Real HITL: `LANGGRAPH_INTERRUPT=true` makes `approval_node` call `interrupt()` and wait for a
   human decision instead of mock-approving.
 - State-history readback as machine-checked persistence evidence.
+- Mermaid diagram in section 2, rendered from the compiled graph.
+
+Evidence for the HITL extension — run with `LANGGRAPH_INTERRUPT=true`, the graph pauses at the
+approval node, and is resumed with `Command(resume={{"approved": False, ...}})`. The rejected
+deletion never reaches `tool`:
+
+```text
+PAUSED at interrupt: True
+proposed_action: Delete the customer account following support verification.
+nodes: ['intake', 'classify', 'risky_action', 'approval', 'clarify', 'finalize']
+approval: {{'approved': False, 'reviewer': 'human', 'comment': 'not verified by a human yet'}}
+tool called? False
+pending_question: What specific action would you like us to take regarding the customer account?
+```
 
 ## 8. Improvement plan
 

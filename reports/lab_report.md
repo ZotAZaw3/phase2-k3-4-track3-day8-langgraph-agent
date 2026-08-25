@@ -2,8 +2,8 @@
 
 ## 1. Team / student
 
-- Name:
-- Repo/commit:
+- Name: Bùi Minh Long (MSSV 2A202601462)
+- Repo/commit: https://github.com/ZotAZaw3/phase2-k3-4-track3-day8-langgraph-agent @ `21c2fc7`
 - Date: 2026-08-25
 
 ## 2. Architecture
